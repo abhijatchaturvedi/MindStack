@@ -585,18 +585,23 @@ select:focus {
   position: fixed;
   right: 20px;
   bottom: 20px;
-  transform: translateY(12px);
+  max-width: min(420px, calc(100vw - 40px));
+  transform: translateY(24px) scale(0.98);
   opacity: 0;
   pointer-events: none;
-  padding: 12px 14px;
-  border-radius: 8px;
+  padding: 14px 16px;
+  border: 1px solid rgba(20, 124, 114, 0.18);
+  border-radius: 10px;
   background: #172026;
   color: #ffffff;
-  transition: 160ms ease;
+  box-shadow: 0 20px 55px rgba(23, 32, 38, 0.28);
+  font-weight: 700;
+  line-height: 1.4;
+  transition: opacity 220ms ease, transform 220ms ease;
 }
 
 .toast.show {
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
   opacity: 1;
 }
 

@@ -73,6 +73,13 @@
     return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric" }).format(new Date(value));
   };
 
+  const truncate = (value, max = 72) => {
+    const text = String(value || "").replace(/\s+/g, " ").trim();
+    return text.length > max ? `${text.slice(0, max - 1)}...` : text;
+  };
+
+  const savedMessage = (label, memory) => `${label} saved to MindStack: ${truncate(memory.title)}`;
+
   const getDueMemories = () =>
     state.memories
       .filter((memory) => !memory.archived && new Date(memory.nextReviewAt) <= today())
@@ -140,7 +147,10 @@
             boxShadow: "0 20px 55px rgba(23, 32, 38, 0.22)",
             color: "#172026",
             font: "600 13px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-            lineHeight: "1.45"
+            lineHeight: "1.45",
+            opacity: "0",
+            transform: "translateY(22px) scale(0.98)",
+            transition: "opacity 220ms ease, transform 220ms ease"
           });
 
           const title = document.createElement("strong");
@@ -153,7 +163,15 @@
 
           toast.append(title, body);
           document.documentElement.appendChild(toast);
-          setTimeout(() => toast.remove(), 4200);
+          requestAnimationFrame(() => {
+            toast.style.opacity = "1";
+            toast.style.transform = "translateY(0) scale(1)";
+          });
+          setTimeout(() => {
+            toast.style.opacity = "0";
+            toast.style.transform = "translateY(18px) scale(0.98)";
+            setTimeout(() => toast.remove(), 240);
+          }, 3600);
         }
       }, () => {
         void chrome.runtime.lastError;
@@ -686,7 +704,7 @@
         ease: 2.5
       };
       await writeData({ ...state, memories: [memory, ...state.memories] });
-      const message = `Webpage saved to MindStack: ${memory.title}`;
+      const message = savedMessage("Webpage", memory);
       toast(message);
       systemToast(message);
       pageToast(tab.id, message);
@@ -718,7 +736,7 @@
         ease: 2.5
       };
       await writeData({ ...state, memories: [memory, ...state.memories] });
-      const message = `Text saved to MindStack: ${memory.title}`;
+      const message = savedMessage("Text", memory);
       toast(message);
       systemToast(message);
       pageToast(tab.id, message);

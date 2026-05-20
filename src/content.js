@@ -1,5 +1,10 @@
 (() => {
   const getSelectionText = () => window.getSelection().toString().trim();
+  const truncate = (value, max = 72) => {
+    const text = String(value || "").replace(/\s+/g, " ").trim();
+    return text.length > max ? `${text.slice(0, max - 1)}...` : text;
+  };
+  const savedMessage = (label, memory) => `${label} saved to MindStack: ${truncate(memory.title)}`;
 
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (message?.type === "MINDSTACK_GET_SELECTION") {
@@ -32,7 +37,7 @@
           type: "memory"
         }
       }, (response) => {
-        if (response?.ok) showToast(`Text saved to MindStack: ${response.memory.title}`);
+        if (response?.ok) showToast(savedMessage("Text", response.memory));
       });
     }
 
@@ -50,14 +55,15 @@
           type: "webpage"
         }
       }, (response) => {
-        if (response?.ok) showToast(`Webpage saved to MindStack: ${response.memory.title}`);
+        if (response?.ok) showToast(savedMessage("Webpage", response.memory));
       });
     }
   });
 
   const showToast = (message) => {
+    document.querySelector(".mindstack-resurface.mindstack-toast")?.remove();
     const toast = document.createElement("div");
-    toast.className = "mindstack-resurface";
+    toast.className = "mindstack-resurface mindstack-toast";
     toast.innerHTML = `
       <header>
         <strong>MindStack</strong>
@@ -67,7 +73,11 @@
     `;
     document.body.appendChild(toast);
     toast.querySelector("button").addEventListener("click", () => toast.remove());
-    setTimeout(() => toast.remove(), 3600);
+    requestAnimationFrame(() => toast.classList.add("show"));
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => toast.remove(), 260);
+    }, 3600);
   };
 
   const escapeHtml = (value) =>

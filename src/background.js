@@ -41,6 +41,13 @@ const daysFromNow = (days) => {
   return date.toISOString();
 };
 
+const truncate = (value, max = 72) => {
+  const text = String(value || "").replace(/\s+/g, " ").trim();
+  return text.length > max ? `${text.slice(0, max - 1)}...` : text;
+};
+
+const savedMessage = (label, memory) => `${label} saved to MindStack: ${truncate(memory.title)}`;
+
 const notifyTab = (tabId, message) => {
   if (!tabId) return;
   chrome.tabs.sendMessage(tabId, message, () => {
@@ -64,7 +71,7 @@ const injectPageToast = (tabId, toastMessage) => {
       Object.assign(toast.style, {
         position: "fixed",
         right: "18px",
-        bottom: "18px",
+        bottom: "20px",
         zIndex: "2147483647",
         maxWidth: "360px",
         padding: "14px 16px",
@@ -74,7 +81,10 @@ const injectPageToast = (tabId, toastMessage) => {
         boxShadow: "0 20px 55px rgba(23, 32, 38, 0.22)",
         color: "#172026",
         font: "600 13px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-        lineHeight: "1.45"
+        lineHeight: "1.45",
+        opacity: "0",
+        transform: "translateY(22px) scale(0.98)",
+        transition: "opacity 220ms ease, transform 220ms ease"
       });
 
       const title = document.createElement("strong");
@@ -87,7 +97,15 @@ const injectPageToast = (tabId, toastMessage) => {
 
       toast.append(title, body);
       document.documentElement.appendChild(toast);
-      setTimeout(() => toast.remove(), 4200);
+      requestAnimationFrame(() => {
+        toast.style.opacity = "1";
+        toast.style.transform = "translateY(0) scale(1)";
+      });
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(18px) scale(0.98)";
+        setTimeout(() => toast.remove(), 240);
+      }, 3600);
     }
   }, () => {
     void chrome.runtime.lastError;
@@ -190,11 +208,12 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       priority: "medium"
     });
     if (memory && tab?.id) {
-      showNotification(`Text saved to MindStack: ${memory.title}`);
+      const message = savedMessage("Text", memory);
+      showNotification(message);
       notifyTab(tab.id, {
         type: "MINDSTACK_CAPTURED",
         title: memory.title,
-        message: `Text saved to MindStack: ${memory.title}`
+        message
       });
     }
   }
@@ -209,11 +228,12 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       type: "webpage"
     });
     if (memory && tab?.id) {
-      showNotification(`Webpage saved to MindStack: ${memory.title}`);
+      const message = savedMessage("Webpage", memory);
+      showNotification(message);
       notifyTab(tab.id, {
         type: "MINDSTACK_CAPTURED",
         title: memory.title,
-        message: `Webpage saved to MindStack: ${memory.title}`
+        message
       });
     }
   }
@@ -233,12 +253,13 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
       priority: "medium",
       type: "webpage"
     });
-    if (memory) showNotification(`Webpage saved to MindStack: ${memory.title}`);
+    const message = memory ? savedMessage("Webpage", memory) : undefined;
+    if (message) showNotification(message);
     notifyTab(tab.id, {
       type: "MINDSTACK_CAPTURED",
       title: memory?.title || "This page could not be saved",
       saved: Boolean(memory),
-      message: memory ? `Webpage saved to MindStack: ${memory.title}` : undefined
+      message
     });
   }
 
@@ -253,12 +274,13 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
       priority: "medium",
       type: "memory"
     });
-    if (memory) showNotification(`Text saved to MindStack: ${memory.title}`);
+    const message = memory ? savedMessage("Text", memory) : undefined;
+    if (message) showNotification(message);
     notifyTab(tab.id, {
       type: "MINDSTACK_CAPTURED",
       title: memory?.title || "No selected text found",
       saved: Boolean(memory),
-      message: memory ? `Text saved to MindStack: ${memory.title}` : undefined
+      message
     });
   }
 });
@@ -272,7 +294,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }).then((memory) => {
       if (memory) {
         const label = memory.type === "webpage" ? "Webpage" : "Text";
-        showNotification(`${label} saved to MindStack: ${memory.title}`);
+        showNotification(savedMessage(label, memory));
       }
       sendResponse({ ok: Boolean(memory), memory });
     });
