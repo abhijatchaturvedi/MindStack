@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MindStack Dashboard</title>
+    <link rel="stylesheet" href="src/app.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-mark">M</div>
+          <div>
+            <p class="eyebrow">MindStack</p>
+            <strong>Memory OS</strong>
+          </div>
+        </div>
+        <nav class="nav-list" aria-label="Dashboard">
+          <button class="nav-item active" data-view="overview">Overview</button>
+          <button class="nav-item" data-view="review">Review</button>
+          <button class="nav-item" data-view="library">Library</button>
+          <button class="nav-item" data-view="insights">Insights</button>
+          <button class="nav-item" data-view="settings">Settings</button>
+        </nav>
+        <div class="sidebar-footer">
+          <button class="button primary full" id="quickAdd">New memory</button>
+          <button class="button ghost full" id="exportData">Export</button>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <h1 id="viewTitle">Overview</h1>
+            <p id="viewSubtitle">Track what you captured, what needs review, and what should resurface next.</p>
+          </div>
+          <div class="search-box">
+            <span aria-hidden="true">⌕</span>
+            <input id="globalSearch" type="search" placeholder="Search memories, tags, sources">
+          </div>
+        </header>
+
+        <section class="view active" id="overviewView">
+          <div class="metrics-grid">
+            <article class="metric-card">
+              <span>Total memories</span>
+              <strong id="metricTotal">0</strong>
+            </article>
+            <article class="metric-card urgent">
+              <span>Due now</span>
+              <strong id="metricDue">0</strong>
+            </article>
+            <article class="metric-card">
+              <span>Weekly captures</span>
+              <strong id="metricWeek">0</strong>
+            </article>
+            <article class="metric-card">
+              <span>Retention score</span>
+              <strong id="metricRetention">0%</strong>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <section class="panel">
+              <div class="panel-heading">
+                <h2>Today’s queue</h2>
+                <button class="text-button" data-view-link="review">Start review</button>
+              </div>
+              <div class="queue-list" id="todayQueue"></div>
+            </section>
+            <section class="panel">
+              <div class="panel-heading">
+                <h2>Recent captures</h2>
+                <button class="text-button" data-view-link="library">View all</button>
+              </div>
+              <div class="memory-list compact" id="recentMemories"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="reviewView">
+          <div class="review-layout">
+            <section class="review-card" id="reviewCard"></section>
+            <aside class="panel review-side">
+              <h2>Review controls</h2>
+              <p class="muted">Score recall honestly. MindStack adjusts the next resurfacing interval automatically.</p>
+              <div class="recall-grid">
+                <button class="button danger" data-recall="forgot">Forgot</button>
+                <button class="button warn" data-recall="hard">Hard</button>
+                <button class="button ghost" data-recall="good">Good</button>
+                <button class="button primary" data-recall="easy">Easy</button>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="view" id="libraryView">
+          <div class="library-toolbar">
+            <div class="segmented" id="statusFilter">
+              <button class="active" data-filter="all">All</button>
+              <button data-filter="due">Due</button>
+              <button data-filter="pinned">Pinned</button>
+              <button data-filter="archived">Archived</button>
+            </div>
+            <select id="sortBy" aria-label="Sort memories">
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="priority">Priority</option>
+              <option value="due">Due date</option>
+            </select>
+          </div>
+          <div class="memory-list" id="libraryList"></div>
+        </section>
+
+        <section class="view" id="insightsView">
+          <div class="insights-grid">
+            <section class="panel">
+              <h2>Capture rhythm</h2>
+              <div class="bar-chart" id="captureChart"></div>
+            </section>
+            <section class="panel">
+              <h2>Tag map</h2>
+              <div class="tag-cloud" id="tagCloud"></div>
+            </section>
+            <section class="panel wide">
+              <h2>Source intelligence</h2>
+              <div class="source-list" id="sourceList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="settingsView">
+          <div class="settings-grid">
+            <section class="panel">
+              <h2>Resurfacing</h2>
+              <label class="toggle-row">
+                <span>Show on-page resurfacing prompts</span>
+                <input id="settingResurface" type="checkbox">
+              </label>
+              <label class="field">
+                <span>Daily review target</span>
+                <input id="settingDailyTarget" type="number" min="1" max="50">
+              </label>
+              <label class="field">
+                <span>Default interval in days</span>
+                <input id="settingDefaultInterval" type="number" min="1" max="30">
+              </label>
+              <button class="button primary" id="saveSettings">Save settings</button>
+            </section>
+            <section class="panel">
+              <h2>Data</h2>
+              <p class="muted">Your memories are stored in Chrome sync storage when available.</p>
+              <label class="import-box">
+                <span>Import JSON backup</span>
+                <input id="importData" type="file" accept="application/json">
+              </label>
+              <button class="button danger" id="clearData">Clear all data</button>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog class="memory-dialog" id="memoryDialog">
+      <form method="dialog" class="memory-form">
+        <div class="panel-heading">
+          <h2 id="dialogTitle">New memory</h2>
+          <button class="icon-button" value="cancel" aria-label="Close">×</button>
+        </div>
+        <input id="memoryId" type="hidden">
+        <label class="field">
+          <span>Title</span>
+          <input id="memoryTitle" type="text" required>
+        </label>
+        <label class="field">
+          <span>Memory</span>
+          <textarea id="memoryText" rows="7" required></textarea>
+        </label>
+        <label class="field">
+          <span>Prompt</span>
+          <input id="memoryPrompt" type="text" placeholder="What should you be able to recall?">
+        </label>
+        <div class="field-grid">
+          <label class="field">
+            <span>Tags</span>
+            <input id="memoryTags" type="text" placeholder="comma separated">
+          </label>
+          <label class="field">
+            <span>Priority</span>
+            <select id="memoryPriority">
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </label>
+        </div>
+        <div class="dialog-actions">
+          <button class="button ghost" value="cancel">Cancel</button>
+          <button class="button primary" id="saveMemory" value="default">Save memory</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status"></div>
+    <script src="src/app.js"></script>
+  </body>
+</html>

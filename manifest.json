@@ -1,0 +1,40 @@
+{
+  "manifest_version": 3,
+  "name": "MindStack",
+  "description": "A professional memory development workspace for capturing, reviewing, and resurfacing knowledge from the web.",
+  "version": "1.0.0",
+  "action": {
+    "default_title": "MindStack",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content.js"],
+      "css": ["src/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options.html",
+  "permissions": ["activeTab", "contextMenus", "storage", "tabs", "scripting"],
+  "host_permissions": ["<all_urls>"],
+  "commands": {
+    "capture-selection": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+M",
+        "mac": "Command+Shift+M"
+      },
+      "description": "Capture selected text into MindStack"
+    },
+    "open-dashboard": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+K",
+        "mac": "Command+Shift+K"
+      },
+      "description": "Open MindStack dashboard"
+    }
+  }
+}

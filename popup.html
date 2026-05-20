@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MindStack Capture</title>
+    <link rel="stylesheet" href="src/app.css">
+  </head>
+  <body class="popup-body">
+    <main class="popup-shell">
+      <section class="popup-header">
+        <div>
+          <p class="eyebrow">MindStack</p>
+          <h1>Capture</h1>
+        </div>
+        <button class="icon-button" id="openDashboard" title="Open dashboard" aria-label="Open dashboard">↗</button>
+      </section>
+
+      <label class="field">
+        <span>Title</span>
+        <input id="captureTitle" type="text" placeholder="What should this be remembered as?">
+      </label>
+
+      <label class="field">
+        <span>Note or selection</span>
+        <textarea id="captureText" rows="7" placeholder="Select text on the page or write a note..."></textarea>
+      </label>
+
+      <div class="field-grid">
+        <label class="field">
+          <span>Tags</span>
+          <input id="captureTags" type="text" placeholder="research, strategy">
+        </label>
+        <label class="field">
+          <span>Priority</span>
+          <select id="capturePriority">
+            <option value="high">High</option>
+            <option value="medium" selected>Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Memory prompt</span>
+        <input id="capturePrompt" type="text" placeholder="Question this note should answer">
+      </label>
+
+      <div class="popup-actions">
+        <button class="button ghost" id="grabSelection">Use selection</button>
+        <button class="button primary" id="saveCapture">Save memory</button>
+      </div>
+
+      <p class="status-line" id="popupStatus" role="status"></p>
+    </main>
+    <script src="src/app.js"></script>
+  </body>
+</html>

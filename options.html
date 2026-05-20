@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MindStack Options</title>
+    <link rel="stylesheet" href="src/app.css">
+  </head>
+  <body class="options-body">
+    <main class="options-shell panel">
+      <p class="eyebrow">MindStack</p>
+      <h1>Extension options</h1>
+      <p class="muted">Fine tune capture, review, and page resurfacing behavior.</p>
+      <label class="toggle-row">
+        <span>Show on-page resurfacing prompts</span>
+        <input id="settingResurface" type="checkbox">
+      </label>
+      <label class="field">
+        <span>Daily review target</span>
+        <input id="settingDailyTarget" type="number" min="1" max="50">
+      </label>
+      <label class="field">
+        <span>Default interval in days</span>
+        <input id="settingDefaultInterval" type="number" min="1" max="30">
+      </label>
+      <button class="button primary" id="saveSettings">Save options</button>
+      <p class="status-line" id="optionsStatus" role="status"></p>
+    </main>
+    <script src="src/app.js"></script>
+  </body>
+</html>

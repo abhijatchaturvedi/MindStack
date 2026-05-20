@@ -1,0 +1,16 @@
+{
+  "name": "mindstack",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chrome extension and dashboard for memory development, capture, review, and resurfacing.",
+  "scripts": {
+    "check": "node --check src/background.js && node --check src/content.js && node --check src/app.js"
+  },
+  "keywords": [
+    "chrome-extension",
+    "memory",
+    "spaced-repetition",
+    "knowledge-management"
+  ],
+  "license": "MIT"
+}
