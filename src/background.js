@@ -48,6 +48,16 @@ const notifyTab = (tabId, message) => {
   });
 };
 
+const showNotification = (message) => {
+  if (!chrome.notifications || !message) return;
+  chrome.notifications.create({
+    type: "basic",
+    iconUrl: "assets/icon-128.png",
+    title: "MindStack",
+    message
+  });
+};
+
 const getSelectionFromTab = async (tabId) => {
   if (!tabId) return "";
   try {
@@ -134,6 +144,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       priority: "medium"
     });
     if (memory && tab?.id) {
+      showNotification(`Text saved to MindStack: ${memory.title}`);
       notifyTab(tab.id, {
         type: "MINDSTACK_CAPTURED",
         title: memory.title,
@@ -152,6 +163,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       type: "webpage"
     });
     if (memory && tab?.id) {
+      showNotification(`Webpage saved to MindStack: ${memory.title}`);
       notifyTab(tab.id, {
         type: "MINDSTACK_CAPTURED",
         title: memory.title,
@@ -175,6 +187,7 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
       priority: "medium",
       type: "webpage"
     });
+    if (memory) showNotification(`Webpage saved to MindStack: ${memory.title}`);
     notifyTab(tab.id, {
       type: "MINDSTACK_CAPTURED",
       title: memory?.title || "This page could not be saved",
@@ -194,6 +207,7 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
       priority: "medium",
       type: "memory"
     });
+    if (memory) showNotification(`Text saved to MindStack: ${memory.title}`);
     notifyTab(tab.id, {
       type: "MINDSTACK_CAPTURED",
       title: memory?.title || "No selected text found",
@@ -209,7 +223,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       ...message.payload,
       url: message.payload?.url || sender.tab?.url,
       sourceTitle: message.payload?.sourceTitle || sender.tab?.title
-    }).then((memory) => sendResponse({ ok: Boolean(memory), memory }));
+    }).then((memory) => {
+      if (memory) {
+        const label = memory.type === "webpage" ? "Webpage" : "Text";
+        showNotification(`${label} saved to MindStack: ${memory.title}`);
+      }
+      sendResponse({ ok: Boolean(memory), memory });
+    });
     return true;
   }
 

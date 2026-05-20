@@ -31,7 +31,7 @@
     }
   ],
   "options_page": "options.html",
-  "permissions": ["activeTab", "contextMenus", "storage", "tabs", "scripting"],
+  "permissions": ["activeTab", "contextMenus", "storage", "tabs", "scripting", "notifications"],
   "host_permissions": ["<all_urls>"],
   "commands": {
     "capture-selection": {

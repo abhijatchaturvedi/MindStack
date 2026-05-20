@@ -99,6 +99,16 @@
     }
   };
 
+  const systemToast = (message) => {
+    if (!isExtension() || !chrome.notifications || !message) return;
+    chrome.notifications.create({
+      type: "basic",
+      iconUrl: "assets/icon-128.png",
+      title: "MindStack",
+      message
+    });
+  };
+
   const seedIfEmpty = async () => {
     if (state.memories.length) return;
     const seed = [
@@ -172,6 +182,7 @@
         </header>
         <div class="card-actions">
           <button class="button ghost" data-edit="${memory.id}">Edit</button>
+          <button class="button danger" data-delete="${memory.id}">Delete</button>
           <button class="button primary" data-review="${memory.id}">Review</button>
         </div>
       </article>
@@ -204,6 +215,7 @@
           <button class="button ghost" data-pin="${memory.id}">${memory.pinned ? "Unpin" : "Pin"}</button>
           <button class="button ghost" data-edit="${memory.id}">Edit</button>
           <button class="button ghost" data-archive="${memory.id}">${memory.archived ? "Restore" : "Archive"}</button>
+          <button class="button danger" data-delete="${memory.id}">Delete</button>
           <button class="button primary" data-review="${memory.id}">Review</button>
         </div>
       </article>
@@ -463,6 +475,7 @@
       const editId = event.target.dataset.edit;
       const pinId = event.target.dataset.pin;
       const archiveId = event.target.dataset.archive;
+      const deleteId = event.target.dataset.delete;
       const reviewId = event.target.dataset.review;
       const recall = event.target.dataset.recall;
 
@@ -480,6 +493,17 @@
           memories: state.memories.map((memory) => memory.id === id ? { ...memory, [key]: !memory[key] } : memory)
         });
         renderDashboard();
+      }
+      if (deleteId) {
+        const memory = state.memories.find((item) => item.id === deleteId);
+        if (!memory || !confirm(`Delete "${memory.title}" from MindStack?`)) return;
+        await writeData({
+          ...state,
+          memories: state.memories.filter((item) => item.id !== deleteId)
+        });
+        if (activeReviewId === deleteId) activeReviewId = null;
+        renderDashboard();
+        toast("Memory deleted");
       }
       if (recall) scoreReview(recall);
       if (event.target.id === "revealAnswer") $("#answerBlock").hidden = false;
@@ -563,7 +587,9 @@
         ease: 2.5
       };
       await writeData({ ...state, memories: [memory, ...state.memories] });
-      toast("Webpage saved");
+      const message = `Webpage saved to MindStack: ${memory.title}`;
+      toast(message);
+      systemToast(message);
       $("#pageCaptureText").value = "";
     });
     $("#saveCapture")?.addEventListener("click", async () => {
@@ -592,7 +618,9 @@
         ease: 2.5
       };
       await writeData({ ...state, memories: [memory, ...state.memories] });
-      toast("Saved to MindStack");
+      const message = `Text saved to MindStack: ${memory.title}`;
+      toast(message);
+      systemToast(message);
       $("#captureText").value = "";
       $("#capturePrompt").value = "";
     });
