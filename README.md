@@ -1,10 +1,10 @@
 # MindStack
 
-[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/)
-[![Manifest V3](https://img.shields.io/badge/Manifest-V3-147c72)](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3)
-[![No Build Step](https://img.shields.io/badge/Build-none-success)](#run-locally)
-[![Storage](https://img.shields.io/badge/Storage-Chrome%20sync-c9772a)](https://developer.chrome.com/docs/extensions/reference/api/storage)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](#license)
+[Chrome Extension](https://developer.chrome.com/docs/extensions/)
+[Manifest V3](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3)
+[No Build Step](#run-locally)
+[Storage](https://developer.chrome.com/docs/extensions/reference/api/storage)
+[License: MIT](#license)
 
 MindStack is a professional Chrome extension for memory development. It captures knowledge from webpages, turns notes into reviewable memory cards, schedules resurfacing with spaced repetition, and provides a dashboard for library management and insights.
 
@@ -29,8 +29,8 @@ Open `dashboard.html` directly in a browser for UI review, or use the extension 
 
 ## Keyboard shortcuts
 
-- `Alt+Shift+M`: capture selected text.
-- `Alt+Shift+K`: open the dashboard.
+- `Ctrl+Shift+Y`: capture selected text.
+- `Ctrl+Shift+U`: open the dashboard.
 
 You can customize shortcuts from `chrome://extensions/shortcuts` after loading the extension.
 
