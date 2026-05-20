@@ -36,15 +36,15 @@
   "commands": {
     "capture-selection": {
       "suggested_key": {
-        "default": "Ctrl+Shift+Y",
-        "mac": "Command+Shift+Y"
+        "default": "Ctrl+Shift+T",
+        "mac": "Command+Shift+T"
       },
       "description": "Capture selected text into MindStack"
     },
     "save-page": {
       "suggested_key": {
-        "default": "Ctrl+Shift+L",
-        "mac": "Command+Shift+L"
+        "default": "Ctrl+Shift+W",
+        "mac": "Command+Shift+W"
       },
       "description": "Save the current webpage to MindStack"
     },

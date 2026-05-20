@@ -29,9 +29,9 @@ Open `dashboard.html` directly in a browser for UI review, or use the extension 
 
 ## Keyboard shortcuts
 
-- `Ctrl+Shift+Y`: capture selected text.
-- `Ctrl+Shift+L`: save the current webpage.
+- `Ctrl+Shift+T`: capture selected text.
 - `Ctrl+Shift+U`: open the dashboard.
+- `Ctrl+Shift+W`: save the current webpage.
 
 You can customize shortcuts from `chrome://extensions/shortcuts` after loading the extension.
 

@@ -134,7 +134,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       priority: "medium"
     });
     if (memory && tab?.id) {
-      notifyTab(tab.id, { type: "MINDSTACK_CAPTURED", title: memory.title });
+      notifyTab(tab.id, {
+        type: "MINDSTACK_CAPTURED",
+        title: memory.title,
+        message: `Text saved to MindStack: ${memory.title}`
+      });
     }
   }
 
@@ -148,7 +152,11 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       type: "webpage"
     });
     if (memory && tab?.id) {
-      notifyTab(tab.id, { type: "MINDSTACK_CAPTURED", title: memory.title });
+      notifyTab(tab.id, {
+        type: "MINDSTACK_CAPTURED",
+        title: memory.title,
+        message: `Webpage saved to MindStack: ${memory.title}`
+      });
     }
   }
 });
@@ -170,7 +178,8 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
     notifyTab(tab.id, {
       type: "MINDSTACK_CAPTURED",
       title: memory?.title || "This page could not be saved",
-      saved: Boolean(memory)
+      saved: Boolean(memory),
+      message: memory ? `Webpage saved to MindStack: ${memory.title}` : undefined
     });
   }
 
@@ -188,7 +197,8 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
     notifyTab(tab.id, {
       type: "MINDSTACK_CAPTURED",
       title: memory?.title || "No selected text found",
-      saved: Boolean(memory)
+      saved: Boolean(memory),
+      message: memory ? `Text saved to MindStack: ${memory.title}` : undefined
     });
   }
 });
