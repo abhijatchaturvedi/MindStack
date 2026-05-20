@@ -109,6 +109,58 @@
     });
   };
 
+  const pageToast = (tabId, message) => {
+    if (!isExtension() || !tabId || !message) return;
+    chrome.tabs.sendMessage(tabId, {
+      type: "MINDSTACK_CAPTURED",
+      title: message,
+      message
+    }, () => {
+      if (!chrome.runtime.lastError) return;
+      chrome.scripting.executeScript({
+        target: { tabId },
+        args: [message],
+        func: (toastMessage) => {
+          const existing = document.querySelector(".mindstack-capture-toast");
+          if (existing) existing.remove();
+
+          const toast = document.createElement("aside");
+          toast.className = "mindstack-capture-toast";
+          toast.setAttribute("role", "status");
+          Object.assign(toast.style, {
+            position: "fixed",
+            right: "18px",
+            bottom: "18px",
+            zIndex: "2147483647",
+            maxWidth: "360px",
+            padding: "14px 16px",
+            border: "1px solid rgba(20, 124, 114, 0.22)",
+            borderRadius: "10px",
+            background: "#ffffff",
+            boxShadow: "0 20px 55px rgba(23, 32, 38, 0.22)",
+            color: "#172026",
+            font: "600 13px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            lineHeight: "1.45"
+          });
+
+          const title = document.createElement("strong");
+          title.textContent = "MindStack";
+          title.style.display = "block";
+          title.style.marginBottom = "5px";
+
+          const body = document.createElement("span");
+          body.textContent = toastMessage;
+
+          toast.append(title, body);
+          document.documentElement.appendChild(toast);
+          setTimeout(() => toast.remove(), 4200);
+        }
+      }, () => {
+        void chrome.runtime.lastError;
+      });
+    });
+  };
+
   const seedIfEmpty = async () => {
     if (state.memories.length) return;
     const seed = [
@@ -349,6 +401,40 @@
     dialog.showModal();
   };
 
+  const confirmAction = ({ eyebrow = "Confirm action", title, message, actionLabel = "Delete" }) => new Promise((resolve) => {
+    const dialog = $("#confirmDialog");
+    if (!dialog) {
+      resolve(false);
+      return;
+    }
+
+    $("#confirmEyebrow").textContent = eyebrow;
+    $("#confirmTitle").textContent = title;
+    $("#confirmMessage").textContent = message;
+    $("#confirmAccept").textContent = actionLabel;
+
+    const cleanup = () => {
+      $("#confirmAccept").removeEventListener("click", accept);
+      $("#confirmCancel").removeEventListener("click", cancel);
+      dialog.removeEventListener("cancel", cancel);
+    };
+    const accept = (event) => {
+      event.preventDefault();
+      cleanup();
+      dialog.close();
+      resolve(true);
+    };
+    const cancel = () => {
+      cleanup();
+      resolve(false);
+    };
+
+    $("#confirmAccept").addEventListener("click", accept);
+    $("#confirmCancel").addEventListener("click", cancel);
+    dialog.addEventListener("cancel", cancel);
+    dialog.showModal();
+  });
+
   const saveMemoryFromDialog = async (event) => {
     event.preventDefault();
     const id = $("#memoryId").value;
@@ -442,7 +528,13 @@
   };
 
   const clearData = async () => {
-    if (!confirm("Clear all MindStack data?")) return;
+    const accepted = await confirmAction({
+      eyebrow: "Clear workspace",
+      title: "Clear all MindStack data?",
+      message: "This removes every saved memory, webpage, review score, and setting from this browser storage.",
+      actionLabel: "Clear data"
+    });
+    if (!accepted) return;
     await writeData(DEFAULT_DATA);
     renderDashboard();
     toast("Data cleared");
@@ -496,7 +588,14 @@
       }
       if (deleteId) {
         const memory = state.memories.find((item) => item.id === deleteId);
-        if (!memory || !confirm(`Delete "${memory.title}" from MindStack?`)) return;
+        if (!memory) return;
+        const accepted = await confirmAction({
+          eyebrow: "Delete memory",
+          title: `Delete "${memory.title}"?`,
+          message: "This removes the memory from your library and review queue. This action cannot be undone.",
+          actionLabel: "Delete memory"
+        });
+        if (!accepted) return;
         await writeData({
           ...state,
           memories: state.memories.filter((item) => item.id !== deleteId)
@@ -590,6 +689,7 @@
       const message = `Webpage saved to MindStack: ${memory.title}`;
       toast(message);
       systemToast(message);
+      pageToast(tab.id, message);
       $("#pageCaptureText").value = "";
     });
     $("#saveCapture")?.addEventListener("click", async () => {
@@ -621,6 +721,7 @@
       const message = `Text saved to MindStack: ${memory.title}`;
       toast(message);
       systemToast(message);
+      pageToast(tab.id, message);
       $("#captureText").value = "";
       $("#capturePrompt").value = "";
     });

@@ -44,6 +44,52 @@ const daysFromNow = (days) => {
 const notifyTab = (tabId, message) => {
   if (!tabId) return;
   chrome.tabs.sendMessage(tabId, message, () => {
+    if (!chrome.runtime.lastError || message?.type !== "MINDSTACK_CAPTURED") return;
+    injectPageToast(tabId, message.saved === false ? message.title : (message.message || `Saved to MindStack: ${message.title}`));
+  });
+};
+
+const injectPageToast = (tabId, toastMessage) => {
+  if (!tabId || !toastMessage) return;
+  chrome.scripting.executeScript({
+    target: { tabId },
+    args: [toastMessage],
+    func: (message) => {
+      const existing = document.querySelector(".mindstack-capture-toast");
+      if (existing) existing.remove();
+
+      const toast = document.createElement("aside");
+      toast.className = "mindstack-capture-toast";
+      toast.setAttribute("role", "status");
+      Object.assign(toast.style, {
+        position: "fixed",
+        right: "18px",
+        bottom: "18px",
+        zIndex: "2147483647",
+        maxWidth: "360px",
+        padding: "14px 16px",
+        border: "1px solid rgba(20, 124, 114, 0.22)",
+        borderRadius: "10px",
+        background: "#ffffff",
+        boxShadow: "0 20px 55px rgba(23, 32, 38, 0.22)",
+        color: "#172026",
+        font: "600 13px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        lineHeight: "1.45"
+      });
+
+      const title = document.createElement("strong");
+      title.textContent = "MindStack";
+      title.style.display = "block";
+      title.style.marginBottom = "5px";
+
+      const body = document.createElement("span");
+      body.textContent = message;
+
+      toast.append(title, body);
+      document.documentElement.appendChild(toast);
+      setTimeout(() => toast.remove(), 4200);
+    }
+  }, () => {
     void chrome.runtime.lastError;
   });
 };

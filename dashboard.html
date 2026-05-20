@@ -202,6 +202,21 @@
       </form>
     </dialog>
 
+    <dialog class="confirm-dialog" id="confirmDialog">
+      <form method="dialog" class="confirm-form">
+        <div class="confirm-icon" aria-hidden="true">!</div>
+        <div>
+          <p class="eyebrow" id="confirmEyebrow">Confirm action</p>
+          <h2 id="confirmTitle">Are you sure?</h2>
+          <p class="muted" id="confirmMessage">This action cannot be undone.</p>
+        </div>
+        <div class="dialog-actions">
+          <button class="button ghost" id="confirmCancel" value="cancel">Cancel</button>
+          <button class="button danger" id="confirmAccept" value="default">Delete</button>
+        </div>
+      </form>
+    </dialog>
+
     <div class="toast" id="toast" role="status"></div>
     <script src="src/app.js"></script>
   </body>

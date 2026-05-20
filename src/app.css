@@ -526,19 +526,52 @@ select:focus {
   gap: 12px;
 }
 
-.memory-dialog {
+.memory-dialog,
+.confirm-dialog {
   width: min(680px, calc(100vw - 32px));
   padding: 0;
   border: 0;
   box-shadow: var(--shadow);
 }
 
-.memory-dialog::backdrop {
+.confirm-dialog {
+  width: min(460px, calc(100vw - 32px));
+}
+
+.memory-dialog::backdrop,
+.confirm-dialog::backdrop {
   background: rgba(16, 24, 29, 0.45);
 }
 
-.memory-form {
+.memory-form,
+.confirm-form {
   padding: 20px;
+}
+
+.confirm-form {
+  display: grid;
+  gap: 16px;
+}
+
+.confirm-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 8px;
+  background: #fde9e9;
+  color: var(--danger);
+  font-weight: 900;
+}
+
+.confirm-form h2 {
+  margin-bottom: 8px;
+  font-size: 1.25rem;
+}
+
+.confirm-form .muted {
+  margin-bottom: 0;
+  line-height: 1.5;
 }
 
 .dialog-actions,
