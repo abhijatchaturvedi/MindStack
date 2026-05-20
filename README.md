@@ -14,7 +14,8 @@ MindStack is a professional Chrome extension for memory development. It captures
 - Web dashboard with overview metrics, review queue, searchable library, tag insights, source intelligence, import/export, and settings.
 - On-page resurfacing layer that reminds you of due memories while browsing.
 - Spaced repetition scheduler with recall scoring for forgot, hard, good, and easy.
-- Chrome storage-backed persistence with local fallback for browser testing.
+- Chrome sync-backed persistence across devices with local fallback for browser testing.
+- Google account status panel for verifying the Chrome profile used for sync.
 - No build step and no dependency install required.
 
 ## Run locally
@@ -27,11 +28,17 @@ MindStack is a professional Chrome extension for memory development. It captures
 
 Open `dashboard.html` directly in a browser for UI review, or use the extension action after loading it.
 
+## Sync across devices
+
+MindStack stores memories in `chrome.storage.sync` when running as a Chrome extension. To sync data, sign into Chrome with the same Google account on each device, enable Chrome sync, and install the extension on each device. The Google account panel in Settings shows which Chrome profile is connected.
+
+Directly opening `dashboard.html` uses local browser storage for preview only and does not sync across devices.
+
 ## Keyboard shortcuts
 
-- `Ctrl+Shift+T`: capture selected text.
-- `Ctrl+Shift+U`: open the dashboard.
-- `Ctrl+Shift+W`: save the current webpage.
+- `Alt+Shift+T`: capture selected text.
+- `Alt+Shift+U`: open the dashboard.
+- `Alt+Shift+W`: save the current webpage.
 
 You can customize shortcuts from `chrome://extensions/shortcuts` after loading the extension.
 

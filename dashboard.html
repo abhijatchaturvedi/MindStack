@@ -132,6 +132,24 @@
 
         <section class="view" id="settingsView">
           <div class="settings-grid">
+            <section class="panel account-panel">
+              <div class="panel-heading">
+                <h2>Google account</h2>
+                <span class="tag" id="syncStatus">Sync storage</span>
+              </div>
+              <div class="account-card">
+                <div class="account-avatar" id="accountAvatar">M</div>
+                <div>
+                  <strong id="accountName">Not connected</strong>
+                  <p class="muted" id="accountEmail">Connect your Chrome Google profile to verify cross-device sync.</p>
+                </div>
+              </div>
+              <div class="card-actions">
+                <button class="button primary" id="connectGoogle">Connect Google</button>
+                <button class="button ghost" id="disconnectGoogle">Disconnect</button>
+              </div>
+              <p class="muted small-copy" id="syncHelp">MindStack stores data in Chrome sync storage. Install the extension and sign into Chrome with the same Google account on other devices.</p>
+            </section>
             <section class="panel">
               <h2>Resurfacing</h2>
               <label class="toggle-row">

@@ -18,8 +18,7 @@
   });
 
   document.addEventListener("keydown", (event) => {
-    const isMod = event.ctrlKey || event.metaKey;
-    if (!isMod || !event.shiftKey) return;
+    if (!event.altKey || !event.shiftKey) return;
 
     if (event.key.toLowerCase() === "t") {
       const text = getSelectionText();

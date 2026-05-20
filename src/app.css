@@ -213,6 +213,52 @@ h2 {
   gap: 18px;
 }
 
+.account-panel {
+  grid-column: 1 / -1;
+}
+
+.account-card {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafb;
+}
+
+.account-avatar {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--brand);
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.account-card strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.account-card p {
+  margin-bottom: 0;
+}
+
+.small-copy {
+  margin: 12px 0 0;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.options-account {
+  margin-top: 18px;
+}
+
 .insights-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

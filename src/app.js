@@ -6,6 +6,12 @@
       resurfaceEnabled: true,
       dailyTarget: 8,
       defaultIntervalDays: 2
+    },
+    account: {
+      connected: false,
+      email: "",
+      id: "",
+      connectedAt: ""
     }
   };
 
@@ -53,6 +59,10 @@
     settings: {
       ...DEFAULT_DATA.settings,
       ...(data?.settings || {})
+    },
+    account: {
+      ...DEFAULT_DATA.account,
+      ...(data?.account || {})
     }
   });
 
@@ -233,6 +243,7 @@
     renderLibrary();
     renderInsights();
     bindSettingsValues();
+    renderAccount();
   };
 
   const renderQueue = (container, memories) => {
@@ -514,6 +525,61 @@
     if ($("#settingDefaultInterval")) $("#settingDefaultInterval").value = state.settings.defaultIntervalDays;
   };
 
+  const renderAccount = () => {
+    const connected = Boolean(state.account?.connected && state.account?.email);
+    const name = connected ? state.account.email.split("@")[0] : "Not connected";
+    const initial = connected ? state.account.email[0].toUpperCase() : "M";
+
+    if ($("#accountName")) $("#accountName").textContent = connected ? name : "Not connected";
+    if ($("#accountEmail")) {
+      $("#accountEmail").textContent = connected
+        ? `${state.account.email} · Chrome sync storage active`
+        : "Connect your Chrome Google profile to verify cross-device sync.";
+    }
+    if ($("#accountAvatar")) $("#accountAvatar").textContent = initial;
+    if ($("#syncStatus")) {
+      $("#syncStatus").textContent = isExtension() && storageArea() === chrome.storage?.sync
+        ? "Chrome sync active"
+        : "Local storage fallback";
+    }
+    if ($("#disconnectGoogle")) $("#disconnectGoogle").disabled = !connected;
+  };
+
+  const connectGoogle = async () => {
+    if (!isExtension() || !chrome.identity?.getProfileUserInfo) {
+      toast("Google identity is only available inside the extension");
+      return;
+    }
+
+    chrome.identity.getProfileUserInfo({ accountStatus: "ANY" }, async (profile) => {
+      if (!profile?.email) {
+        toast("No Chrome Google profile found. Sign into Chrome, then try again.");
+        return;
+      }
+
+      await writeData({
+        ...state,
+        account: {
+          connected: true,
+          email: profile.email,
+          id: profile.id || "",
+          connectedAt: new Date().toISOString()
+        }
+      });
+      renderAccount();
+      toast("Google account connected");
+    });
+  };
+
+  const disconnectGoogle = async () => {
+    await writeData({
+      ...state,
+      account: structuredClone(DEFAULT_DATA.account)
+    });
+    renderAccount();
+    toast("Google account disconnected");
+  };
+
   const saveSettings = async () => {
     await writeData({
       ...state,
@@ -573,6 +639,8 @@
     $("#importData")?.addEventListener("change", (event) => importData(event.target.files[0]).catch(() => toast("Import failed")));
     $("#clearData")?.addEventListener("click", clearData);
     $("#saveSettings")?.addEventListener("click", saveSettings);
+    $("#connectGoogle")?.addEventListener("click", connectGoogle);
+    $("#disconnectGoogle")?.addEventListener("click", disconnectGoogle);
 
     $("#statusFilter")?.addEventListener("click", (event) => {
       if (!event.target.matches("button")) return;
@@ -748,7 +816,10 @@
   const initOptions = async () => {
     state = await readData();
     bindSettingsValues();
+    renderAccount();
     $("#saveSettings")?.addEventListener("click", saveSettings);
+    $("#connectGoogle")?.addEventListener("click", connectGoogle);
+    $("#disconnectGoogle")?.addEventListener("click", disconnectGoogle);
   };
 
   document.addEventListener("DOMContentLoaded", () => {

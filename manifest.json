@@ -31,27 +31,27 @@
     }
   ],
   "options_page": "options.html",
-  "permissions": ["activeTab", "contextMenus", "storage", "tabs", "scripting", "notifications"],
+  "permissions": ["activeTab", "contextMenus", "storage", "tabs", "scripting", "notifications", "identity", "identity.email"],
   "host_permissions": ["<all_urls>"],
   "commands": {
     "capture-selection": {
       "suggested_key": {
-        "default": "Ctrl+Shift+T",
-        "mac": "Command+Shift+T"
+        "default": "Alt+Shift+T",
+        "mac": "Alt+Shift+T"
       },
       "description": "Capture selected text into MindStack"
     },
     "save-page": {
       "suggested_key": {
-        "default": "Ctrl+Shift+W",
-        "mac": "Command+Shift+W"
+        "default": "Alt+Shift+W",
+        "mac": "Alt+Shift+W"
       },
       "description": "Save the current webpage to MindStack"
     },
     "open-dashboard": {
       "suggested_key": {
-        "default": "Ctrl+Shift+U",
-        "mac": "Command+Shift+U"
+        "default": "Alt+Shift+U",
+        "mac": "Alt+Shift+U"
       },
       "description": "Open MindStack dashboard"
     }
