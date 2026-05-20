@@ -29,8 +29,10 @@ Open `dashboard.html` directly in a browser for UI review, or use the extension 
 
 ## Keyboard shortcuts
 
-- `Ctrl+Shift+M`: capture selected text.
-- `Ctrl+Shift+K`: open the dashboard.
+- `Alt+Shift+M`: capture selected text.
+- `Alt+Shift+K`: open the dashboard.
+
+You can customize shortcuts from `chrome://extensions/shortcuts` after loading the extension.
 
 ## Development checks
 

@@ -13,8 +13,7 @@
   });
 
   document.addEventListener("keydown", (event) => {
-    const isMod = event.ctrlKey || event.metaKey;
-    if (!isMod || !event.shiftKey || event.key.toLowerCase() !== "m") return;
+    if (!event.altKey || !event.shiftKey || event.key.toLowerCase() !== "m") return;
     const text = getSelectionText();
     if (!text) return;
     chrome.runtime.sendMessage({

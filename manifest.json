@@ -24,15 +24,15 @@
   "commands": {
     "capture-selection": {
       "suggested_key": {
-        "default": "Ctrl+Shift+M",
-        "mac": "Command+Shift+M"
+        "default": "Alt+Shift+M",
+        "mac": "Alt+Shift+M"
       },
       "description": "Capture selected text into MindStack"
     },
     "open-dashboard": {
       "suggested_key": {
-        "default": "Ctrl+Shift+K",
-        "mac": "Command+Shift+K"
+        "default": "Alt+Shift+K",
+        "mac": "Alt+Shift+K"
       },
       "description": "Open MindStack dashboard"
     }
