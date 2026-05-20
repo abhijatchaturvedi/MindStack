@@ -543,6 +543,18 @@
         : "Local storage fallback";
     }
     if ($("#disconnectGoogle")) $("#disconnectGoogle").disabled = !connected;
+    if ($("#connectGoogle")) $("#connectGoogle").textContent = connected ? "Connected" : "Connect";
+    if ($("#connectGoogle")) $("#connectGoogle").disabled = connected;
+    if ($("#popupAuthGate")) $("#popupAuthGate").hidden = connected;
+    if ($("#popupCaptureWorkspace")) $("#popupCaptureWorkspace").hidden = !connected;
+  };
+
+  const hasConnectedAccount = () => Boolean(state.account?.connected && state.account?.email);
+
+  const requireConnectedAccount = () => {
+    if (hasConnectedAccount()) return true;
+    toast("Connect your Google account before saving.");
+    return false;
   };
 
   const connectGoogle = async () => {
@@ -702,6 +714,7 @@
     $("#pageCaptureTitle").value = tab?.title || "";
     $("#pagePreviewTitle").textContent = tab?.title || "Current page";
     $("#pagePreviewUrl").textContent = hostName(tab?.url) || tab?.url || "No active webpage";
+    renderAccount();
 
     const requestSelection = () => {
       if (!isExtension() || !tab?.id) return;
@@ -731,6 +744,7 @@
       });
     });
     $("#grabSelection")?.addEventListener("click", requestSelection);
+    $("#connectGoogle")?.addEventListener("click", connectGoogle);
     $("#copyPageUrl")?.addEventListener("click", async () => {
       if (!tab?.url) {
         toast("No page URL available");
@@ -748,6 +762,7 @@
       else location.href = "dashboard.html";
     });
     $("#savePageCapture")?.addEventListener("click", async () => {
+      if (!requireConnectedAccount()) return;
       if (!tab?.url) {
         toast("No webpage available to save");
         return;
@@ -779,6 +794,7 @@
       $("#pageCaptureText").value = "";
     });
     $("#saveCapture")?.addEventListener("click", async () => {
+      if (!requireConnectedAccount()) return;
       const text = $("#captureText").value.trim();
       if (!text) {
         toast("Add text before saving");

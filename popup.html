@@ -19,93 +19,110 @@
         <button class="icon-button popup-open-button" id="openDashboard" title="Open dashboard" aria-label="Open dashboard">Open</button>
       </section>
 
-      <section class="page-preview">
+      <section class="account-card popup-account-card">
+        <div class="account-avatar" id="accountAvatar">M</div>
         <div>
-          <span class="page-preview-label">Current page</span>
-          <strong id="pagePreviewTitle">Loading page...</strong>
-          <small id="pagePreviewUrl"></small>
+          <span class="page-preview-label">Google account</span>
+          <strong id="accountName">Not connected</strong>
+          <p class="muted" id="accountEmail">Connect before saving memories.</p>
         </div>
+        <button class="button primary small" id="connectGoogle" type="button">Connect</button>
       </section>
 
-      <div class="capture-tabs" role="tablist" aria-label="Capture type">
-        <button class="active" type="button" data-capture-mode="webpage">Webpage</button>
-        <button type="button" data-capture-mode="memory">Memory note</button>
-      </div>
-
-      <section class="capture-panel active" id="webpageCapturePanel">
-        <label class="field">
-          <span>Title</span>
-          <input id="pageCaptureTitle" type="text" placeholder="Page title">
-        </label>
-
-        <label class="field">
-          <span>Optional note</span>
-          <textarea id="pageCaptureText" rows="4" placeholder="Why is this page worth saving?"></textarea>
-        </label>
-
-        <div class="field-grid">
-          <label class="field">
-            <span>Tags</span>
-            <input id="pageCaptureTags" type="text" placeholder="webpage, research">
-          </label>
-          <label class="field">
-            <span>Priority</span>
-            <select id="pageCapturePriority">
-              <option value="high">High</option>
-              <option value="medium" selected>Medium</option>
-              <option value="low">Low</option>
-            </select>
-          </label>
-        </div>
-
-        <div class="popup-actions">
-          <button class="button ghost" id="copyPageUrl" type="button">Copy URL</button>
-          <button class="button primary" id="savePageCapture" type="button">Save webpage</button>
-        </div>
+      <section class="auth-gate" id="popupAuthGate">
+        <strong>Connect Google to start using MindStack</strong>
+        <p>MindStack uses your Chrome Google profile so your saved memories can sync across devices.</p>
       </section>
 
-      <section class="capture-panel" id="memoryCapturePanel">
-        <div class="section-row">
+      <section id="popupCaptureWorkspace">
+        <section class="page-preview">
           <div>
-            <p class="eyebrow">Memory card</p>
-            <h2>Capture an idea</h2>
+            <span class="page-preview-label">Current page</span>
+            <strong id="pagePreviewTitle">Loading page...</strong>
+            <small id="pagePreviewUrl"></small>
           </div>
-          <button class="button ghost small" id="grabSelection" type="button">Use selection</button>
+        </section>
+
+        <div class="capture-tabs" role="tablist" aria-label="Capture type">
+          <button class="active" type="button" data-capture-mode="webpage">Webpage</button>
+          <button type="button" data-capture-mode="memory">Memory note</button>
         </div>
 
-        <label class="field">
-          <span>Title</span>
-          <input id="captureTitle" type="text" placeholder="What should this be remembered as?">
-        </label>
-
-        <label class="field">
-          <span>Note or selection</span>
-          <textarea id="captureText" rows="6" placeholder="Select text on the page or write a note..."></textarea>
-        </label>
-
-        <div class="field-grid">
+        <section class="capture-panel active" id="webpageCapturePanel">
           <label class="field">
-            <span>Tags</span>
-            <input id="captureTags" type="text" placeholder="research, strategy">
+            <span>Title</span>
+            <input id="pageCaptureTitle" type="text" placeholder="Page title">
           </label>
+
           <label class="field">
-            <span>Priority</span>
-            <select id="capturePriority">
-              <option value="high">High</option>
-              <option value="medium" selected>Medium</option>
-              <option value="low">Low</option>
-            </select>
+            <span>Optional note</span>
+            <textarea id="pageCaptureText" rows="4" placeholder="Why is this page worth saving?"></textarea>
           </label>
-        </div>
 
-        <label class="field">
-          <span>Memory prompt</span>
-          <input id="capturePrompt" type="text" placeholder="Question this note should answer">
-        </label>
+          <div class="field-grid">
+            <label class="field">
+              <span>Tags</span>
+              <input id="pageCaptureTags" type="text" placeholder="webpage, research">
+            </label>
+            <label class="field">
+              <span>Priority</span>
+              <select id="pageCapturePriority">
+                <option value="high">High</option>
+                <option value="medium" selected>Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </label>
+          </div>
 
-        <div class="popup-actions">
-          <button class="button primary" id="saveCapture" type="button">Save memory</button>
-        </div>
+          <div class="popup-actions">
+            <button class="button ghost" id="copyPageUrl" type="button">Copy URL</button>
+            <button class="button primary" id="savePageCapture" type="button">Save webpage</button>
+          </div>
+        </section>
+
+        <section class="capture-panel" id="memoryCapturePanel">
+          <div class="section-row">
+            <div>
+              <p class="eyebrow">Memory card</p>
+              <h2>Capture an idea</h2>
+            </div>
+            <button class="button ghost small" id="grabSelection" type="button">Use selection</button>
+          </div>
+
+          <label class="field">
+            <span>Title</span>
+            <input id="captureTitle" type="text" placeholder="What should this be remembered as?">
+          </label>
+
+          <label class="field">
+            <span>Note or selection</span>
+            <textarea id="captureText" rows="6" placeholder="Select text on the page or write a note..."></textarea>
+          </label>
+
+          <div class="field-grid">
+            <label class="field">
+              <span>Tags</span>
+              <input id="captureTags" type="text" placeholder="research, strategy">
+            </label>
+            <label class="field">
+              <span>Priority</span>
+              <select id="capturePriority">
+                <option value="high">High</option>
+                <option value="medium" selected>Medium</option>
+                <option value="low">Low</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Memory prompt</span>
+            <input id="capturePrompt" type="text" placeholder="Question this note should answer">
+          </label>
+
+          <div class="popup-actions">
+            <button class="button primary" id="saveCapture" type="button">Save memory</button>
+          </div>
+        </section>
       </section>
 
       <p class="status-line" id="popupStatus" role="status"></p>

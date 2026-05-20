@@ -6,6 +6,12 @@ const DEFAULT_DATA = {
     resurfaceEnabled: true,
     dailyTarget: 8,
     defaultIntervalDays: 2
+  },
+  account: {
+    connected: false,
+    email: "",
+    id: "",
+    connectedAt: ""
   }
 };
 
@@ -19,6 +25,10 @@ const readData = async () => {
     settings: {
       ...DEFAULT_DATA.settings,
       ...((stored[STORE_KEY] || {}).settings || {})
+    },
+    account: {
+      ...DEFAULT_DATA.account,
+      ...((stored[STORE_KEY] || {}).account || {})
     }
   };
 };
@@ -47,6 +57,8 @@ const truncate = (value, max = 72) => {
 };
 
 const savedMessage = (label, memory) => `${label} saved to MindStack: ${truncate(memory.title)}`;
+const accountConnected = (data) => Boolean(data?.account?.connected && data?.account?.email);
+const connectRequiredMessage = "Connect your Google account in MindStack before saving.";
 
 const notifyTab = (tabId, message) => {
   if (!tabId) return;
@@ -137,6 +149,7 @@ const getSelectionFromTab = async (tabId) => {
 
 const captureMemory = async ({ title, text, url, sourceTitle, tags, priority, prompt, type }) => {
   const data = await readData();
+  if (!accountConnected(data)) return null;
   const cleanText = String(text || "").trim();
   const cleanUrl = String(url || "").trim();
   if (!cleanText && !cleanUrl) return null;
@@ -199,6 +212,12 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   }
 
   if (info.menuItemId === "mindstack-capture-selection") {
+    const data = await readData();
+    if (!accountConnected(data)) {
+      showNotification(connectRequiredMessage);
+      notifyTab(tab?.id, { type: "MINDSTACK_CAPTURED", title: connectRequiredMessage, saved: false });
+      return;
+    }
     const memory = await captureMemory({
       text: info.selectionText,
       title: tab?.title,
@@ -219,6 +238,12 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   }
 
   if (info.menuItemId === "mindstack-save-page") {
+    const data = await readData();
+    if (!accountConnected(data)) {
+      showNotification(connectRequiredMessage);
+      notifyTab(tab?.id, { type: "MINDSTACK_CAPTURED", title: connectRequiredMessage, saved: false });
+      return;
+    }
     const memory = await captureMemory({
       title: tab?.title,
       sourceTitle: tab?.title,
@@ -245,6 +270,12 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
   }
 
   if (command === "save-page" && tab?.id) {
+    const data = await readData();
+    if (!accountConnected(data)) {
+      showNotification(connectRequiredMessage);
+      notifyTab(tab.id, { type: "MINDSTACK_CAPTURED", title: connectRequiredMessage, saved: false });
+      return;
+    }
     const memory = await captureMemory({
       title: tab.title,
       sourceTitle: tab.title,
@@ -264,6 +295,12 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
   }
 
   if (command === "capture-selection" && tab?.id) {
+    const data = await readData();
+    if (!accountConnected(data)) {
+      showNotification(connectRequiredMessage);
+      notifyTab(tab.id, { type: "MINDSTACK_CAPTURED", title: connectRequiredMessage, saved: false });
+      return;
+    }
     const text = await getSelectionFromTab(tab.id);
     const memory = await captureMemory({
       text,
@@ -287,16 +324,22 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type === "MINDSTACK_CAPTURE") {
-    captureMemory({
+    readData().then((data) => {
+      if (!accountConnected(data)) {
+        showNotification(connectRequiredMessage);
+        sendResponse({ ok: false, error: "connect_required", message: connectRequiredMessage });
+        return null;
+      }
+      return captureMemory({
       ...message.payload,
       url: message.payload?.url || sender.tab?.url,
       sourceTitle: message.payload?.sourceTitle || sender.tab?.title
+      });
     }).then((memory) => {
-      if (memory) {
-        const label = memory.type === "webpage" ? "Webpage" : "Text";
-        showNotification(savedMessage(label, memory));
-      }
-      sendResponse({ ok: Boolean(memory), memory });
+      if (!memory) return;
+      const label = memory.type === "webpage" ? "Webpage" : "Text";
+      showNotification(savedMessage(label, memory));
+      sendResponse({ ok: true, memory });
     });
     return true;
   }

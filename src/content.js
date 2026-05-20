@@ -37,6 +37,7 @@
         }
       }, (response) => {
         if (response?.ok) showToast(savedMessage("Text", response.memory));
+        else if (response?.message) showToast(response.message);
       });
     }
 
@@ -55,6 +56,7 @@
         }
       }, (response) => {
         if (response?.ok) showToast(savedMessage("Webpage", response.memory));
+        else if (response?.message) showToast(response.message);
       });
     }
   });

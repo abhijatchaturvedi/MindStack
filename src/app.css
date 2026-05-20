@@ -249,6 +249,47 @@ h2 {
   margin-bottom: 0;
 }
 
+.popup-account-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  margin: 0 0 14px;
+  background: #ffffff;
+}
+
+.popup-account-card .button {
+  align-self: center;
+}
+
+.popup-account-card .button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.auth-gate {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 16px;
+  border: 1px solid rgba(201, 119, 42, 0.28);
+  border-radius: 8px;
+  background: #fff8ef;
+}
+
+.auth-gate[hidden],
+#popupCaptureWorkspace[hidden] {
+  display: none;
+}
+
+.auth-gate strong {
+  color: var(--text);
+}
+
+.auth-gate p {
+  margin-bottom: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 .small-copy {
   margin: 12px 0 0;
   font-size: 0.86rem;
