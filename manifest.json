@@ -41,6 +41,13 @@
       },
       "description": "Capture selected text into MindStack"
     },
+    "save-page": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+L",
+        "mac": "Command+Shift+L"
+      },
+      "description": "Save the current webpage to MindStack"
+    },
     "open-dashboard": {
       "suggested_key": {
         "default": "Ctrl+Shift+U",

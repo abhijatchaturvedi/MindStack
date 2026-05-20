@@ -7,27 +7,52 @@
     }
 
     if (message?.type === "MINDSTACK_CAPTURED") {
-      showToast(`Saved to MindStack: ${message.title}`);
+      showToast(message.saved === false ? message.title : `Saved to MindStack: ${message.title}`);
       sendResponse({ ok: true });
     }
   });
 
   document.addEventListener("keydown", (event) => {
     const isMod = event.ctrlKey || event.metaKey;
-    if (!isMod || !event.shiftKey || event.key.toLowerCase() !== "y") return;
-    const text = getSelectionText();
-    if (!text) return;
-    chrome.runtime.sendMessage({
-      type: "MINDSTACK_CAPTURE",
-      payload: {
-        text,
-        title: document.title,
-        sourceTitle: document.title,
-        url: location.href,
-        tags: ["web"],
-        priority: "medium"
-      }
-    });
+    if (!isMod || !event.shiftKey) return;
+
+    if (event.key.toLowerCase() === "y") {
+      const text = getSelectionText();
+      if (!text) return;
+      event.preventDefault();
+      chrome.runtime.sendMessage({
+        type: "MINDSTACK_CAPTURE",
+        payload: {
+          text,
+          title: document.title,
+          sourceTitle: document.title,
+          url: location.href,
+          tags: ["web"],
+          priority: "medium",
+          type: "memory"
+        }
+      }, (response) => {
+        if (response?.ok) showToast(`Saved to MindStack: ${response.memory.title}`);
+      });
+    }
+
+    if (event.key.toLowerCase() === "l") {
+      event.preventDefault();
+      chrome.runtime.sendMessage({
+        type: "MINDSTACK_CAPTURE",
+        payload: {
+          text: "",
+          title: document.title,
+          sourceTitle: document.title,
+          url: location.href,
+          tags: ["webpage"],
+          priority: "medium",
+          type: "webpage"
+        }
+      }, (response) => {
+        if (response?.ok) showToast(`Saved to MindStack: ${response.memory.title}`);
+      });
+    }
   });
 
   const showToast = (message) => {

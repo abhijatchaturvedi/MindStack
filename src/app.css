@@ -252,6 +252,12 @@ h2 {
   font-weight: 700;
 }
 
+.button.small {
+  min-height: 34px;
+  padding: 7px 10px;
+  font-size: 0.82rem;
+}
+
 .button.primary {
   background: var(--brand);
   color: #ffffff;
@@ -570,9 +576,9 @@ select:focus {
 }
 
 .popup-body {
-  width: 390px;
-  min-height: 560px;
-  background: #ffffff;
+  width: 430px;
+  min-height: 590px;
+  background: #f6f7f9;
 }
 
 .popup-shell,
@@ -587,8 +593,112 @@ select:focus {
   margin-bottom: 16px;
 }
 
+.popup-brand {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 11px;
+}
+
+.popup-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(20, 124, 114, 0.2);
+}
+
 .popup-header h1 {
   font-size: 1.5rem;
+}
+
+.popup-open-button {
+  width: auto;
+  min-width: 56px;
+  padding: 0 12px;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.page-preview {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.page-preview-label {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.page-preview strong,
+.page-preview small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.page-preview small {
+  margin-top: 4px;
+  color: var(--muted);
+}
+
+.capture-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 4px;
+  margin-bottom: 14px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.capture-tabs button {
+  min-height: 38px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.capture-tabs button.active {
+  background: #172026;
+  color: #ffffff;
+}
+
+.capture-panel {
+  display: none;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.capture-panel.active {
+  display: block;
+}
+
+.section-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.section-row h2 {
+  margin: 0;
+  font-size: 1rem;
 }
 
 .status-line {

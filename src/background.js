@@ -41,17 +41,41 @@ const daysFromNow = (days) => {
   return date.toISOString();
 };
 
-const captureMemory = async ({ title, text, url, sourceTitle, tags, priority, prompt }) => {
+const notifyTab = (tabId, message) => {
+  if (!tabId) return;
+  chrome.tabs.sendMessage(tabId, message, () => {
+    void chrome.runtime.lastError;
+  });
+};
+
+const getSelectionFromTab = async (tabId) => {
+  if (!tabId) return "";
+  try {
+    const [result] = await chrome.scripting.executeScript({
+      target: { tabId },
+      func: () => window.getSelection().toString().trim()
+    });
+    return result?.result || "";
+  } catch {
+    return "";
+  }
+};
+
+const captureMemory = async ({ title, text, url, sourceTitle, tags, priority, prompt, type }) => {
   const data = await readData();
   const cleanText = String(text || "").trim();
-  if (!cleanText) return null;
+  const cleanUrl = String(url || "").trim();
+  if (!cleanText && !cleanUrl) return null;
+  const captureType = type || (cleanText ? "memory" : "webpage");
+  const cleanTitle = String(title || sourceTitle || cleanUrl || "Untitled memory").trim();
 
   const memory = {
     id: uid(),
-    title: String(title || sourceTitle || "Untitled memory").trim(),
+    type: captureType,
+    title: cleanTitle,
     text: cleanText,
-    prompt: String(prompt || `What is important about ${String(title || sourceTitle || "this note").trim()}?`).trim(),
-    url: url || "",
+    prompt: String(prompt || (captureType === "webpage" ? `Why did you save ${cleanTitle}?` : `What is important about ${cleanTitle}?`)).trim(),
+    url: cleanUrl,
     sourceTitle: sourceTitle || "",
     tags: Array.isArray(tags) ? tags : normalizeTags(tags),
     priority: priority || "medium",
@@ -70,18 +94,29 @@ const captureMemory = async ({ title, text, url, sourceTitle, tags, priority, pr
   return memory;
 };
 
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
-    id: "mindstack-capture-selection",
-    title: "Save selection to MindStack",
-    contexts: ["selection"]
+const setupContextMenus = () => {
+  chrome.contextMenus.removeAll(() => {
+    chrome.contextMenus.create({
+      id: "mindstack-capture-selection",
+      title: "Save selection to MindStack",
+      contexts: ["selection"]
+    });
+    chrome.contextMenus.create({
+      id: "mindstack-save-page",
+      title: "Save page to MindStack",
+      contexts: ["page"]
+    });
+    chrome.contextMenus.create({
+      id: "mindstack-open-dashboard",
+      title: "Open MindStack dashboard",
+      contexts: ["action"]
+    });
   });
-  chrome.contextMenus.create({
-    id: "mindstack-open-dashboard",
-    title: "Open MindStack dashboard",
-    contexts: ["action"]
-  });
-});
+};
+
+chrome.runtime.onInstalled.addListener(setupContextMenus);
+chrome.runtime.onStartup.addListener(setupContextMenus);
+setupContextMenus();
 
 chrome.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === "mindstack-open-dashboard") {
@@ -99,9 +134,21 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
       priority: "medium"
     });
     if (memory && tab?.id) {
-      chrome.tabs.sendMessage(tab.id, { type: "MINDSTACK_CAPTURED", title: memory.title }, () => {
-        void chrome.runtime.lastError;
-      });
+      notifyTab(tab.id, { type: "MINDSTACK_CAPTURED", title: memory.title });
+    }
+  }
+
+  if (info.menuItemId === "mindstack-save-page") {
+    const memory = await captureMemory({
+      title: tab?.title,
+      sourceTitle: tab?.title,
+      url: tab?.url,
+      tags: ["webpage"],
+      priority: "medium",
+      type: "webpage"
+    });
+    if (memory && tab?.id) {
+      notifyTab(tab.id, { type: "MINDSTACK_CAPTURED", title: memory.title });
     }
   }
 });
@@ -111,17 +158,37 @@ chrome.commands.onCommand.addListener(async (command, tab) => {
     chrome.tabs.create({ url: chrome.runtime.getURL("dashboard.html") });
   }
 
+  if (command === "save-page" && tab?.id) {
+    const memory = await captureMemory({
+      title: tab.title,
+      sourceTitle: tab.title,
+      url: tab.url,
+      tags: ["webpage"],
+      priority: "medium",
+      type: "webpage"
+    });
+    notifyTab(tab.id, {
+      type: "MINDSTACK_CAPTURED",
+      title: memory?.title || "This page could not be saved",
+      saved: Boolean(memory)
+    });
+  }
+
   if (command === "capture-selection" && tab?.id) {
-    chrome.tabs.sendMessage(tab.id, { type: "MINDSTACK_GET_SELECTION" }, async (response) => {
-      if (chrome.runtime.lastError || !response?.text) return;
-      await captureMemory({
-        text: response.text,
-        title: tab.title,
-        sourceTitle: tab.title,
-        url: tab.url,
-        tags: ["web"],
-        priority: "medium"
-      });
+    const text = await getSelectionFromTab(tab.id);
+    const memory = await captureMemory({
+      text,
+      title: tab.title,
+      sourceTitle: tab.title,
+      url: tab.url,
+      tags: ["web"],
+      priority: "medium",
+      type: "memory"
+    });
+    notifyTab(tab.id, {
+      type: "MINDSTACK_CAPTURED",
+      title: memory?.title || "No selected text found",
+      saved: Boolean(memory)
     });
   }
 });

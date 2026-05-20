@@ -30,9 +30,12 @@ Open `dashboard.html` directly in a browser for UI review, or use the extension 
 ## Keyboard shortcuts
 
 - `Ctrl+Shift+Y`: capture selected text.
+- `Ctrl+Shift+L`: save the current webpage.
 - `Ctrl+Shift+U`: open the dashboard.
 
 You can customize shortcuts from `chrome://extensions/shortcuts` after loading the extension.
+
+If a shortcut does not fire, open `chrome://extensions/shortcuts` and make sure MindStack is assigned there. Chrome sometimes keeps unpacked extension shortcuts as **Not set** after reloads or when another extension/browser command already uses the same keys.
 
 ## Development checks
 

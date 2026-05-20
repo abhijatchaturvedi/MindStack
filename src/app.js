@@ -166,7 +166,7 @@
         <header>
           <div>
             <h3>${escapeHtml(memory.title)}</h3>
-            <p>${escapeHtml(memory.prompt || memory.text)}</p>
+            <p>${escapeHtml(memory.prompt || memory.text || memory.url)}</p>
           </div>
           <span class="pill ${memory.priority}">${escapeHtml(memory.priority)}</span>
         </header>
@@ -191,12 +191,13 @@
         <header>
           <div>
             <h3>${memory.pinned ? "★ " : ""}${escapeHtml(memory.title)}</h3>
-            <p>${escapeHtml(memory.text)}</p>
+            <p>${escapeHtml(memory.text || memory.url || "Saved webpage")}</p>
           </div>
           <span class="pill ${memory.priority}">${escapeHtml(memory.priority)}</span>
         </header>
         <div class="tag-row">
           ${(memory.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}
+          ${memory.type ? `<span class="tag">${escapeHtml(memory.type)}</span>` : ""}
           <span class="tag">Due ${formatDate(memory.nextReviewAt)}</span>
         </div>
         <div class="card-actions">
@@ -251,7 +252,7 @@
       <p class="prompt">${escapeHtml(memory.prompt || "Recall the key idea before revealing the answer.")}</p>
       <button class="button ghost" id="revealAnswer">Reveal answer</button>
       <div class="answer" id="answerBlock" hidden>
-        ${escapeHtml(memory.text)}
+        ${escapeHtml(memory.text || memory.url || "No note was added for this webpage.")}
         ${(memory.tags || []).length ? `<div class="tag-row">${memory.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>` : ""}
       </div>
     `;
@@ -489,19 +490,81 @@
     state = await readData();
     const [tab] = isExtension() ? await chrome.tabs.query({ active: true, currentWindow: true }) : [{ title: "", url: "" }];
     $("#captureTitle").value = tab?.title || "";
+    $("#pageCaptureTitle").value = tab?.title || "";
+    $("#pagePreviewTitle").textContent = tab?.title || "Current page";
+    $("#pagePreviewUrl").textContent = hostName(tab?.url) || tab?.url || "No active webpage";
 
     const requestSelection = () => {
       if (!isExtension() || !tab?.id) return;
       chrome.tabs.sendMessage(tab.id, { type: "MINDSTACK_GET_SELECTION" }, (response) => {
-        if (!chrome.runtime.lastError && response?.text) $("#captureText").value = response.text;
+        if (!chrome.runtime.lastError && response?.text) {
+          $("#captureText").value = response.text;
+          return;
+        }
+        chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          func: () => window.getSelection().toString().trim()
+        }, (results) => {
+          if (!chrome.runtime.lastError && results?.[0]?.result) {
+            $("#captureText").value = results[0].result;
+          }
+        });
       });
     };
 
     requestSelection();
+    $$(".capture-tabs button").forEach((button) => {
+      button.addEventListener("click", () => {
+        const mode = button.dataset.captureMode;
+        $$(".capture-tabs button").forEach((item) => item.classList.toggle("active", item === button));
+        $("#webpageCapturePanel")?.classList.toggle("active", mode === "webpage");
+        $("#memoryCapturePanel")?.classList.toggle("active", mode === "memory");
+      });
+    });
     $("#grabSelection")?.addEventListener("click", requestSelection);
+    $("#copyPageUrl")?.addEventListener("click", async () => {
+      if (!tab?.url) {
+        toast("No page URL available");
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(tab.url);
+        toast("URL copied");
+      } catch {
+        toast("Copy failed");
+      }
+    });
     $("#openDashboard")?.addEventListener("click", () => {
       if (isExtension()) chrome.tabs.create({ url: chrome.runtime.getURL("dashboard.html") });
       else location.href = "dashboard.html";
+    });
+    $("#savePageCapture")?.addEventListener("click", async () => {
+      if (!tab?.url) {
+        toast("No webpage available to save");
+        return;
+      }
+      const memory = {
+        id: uid(),
+        type: "webpage",
+        title: $("#pageCaptureTitle").value.trim() || tab?.title || tab.url,
+        text: $("#pageCaptureText").value.trim(),
+        prompt: `Why did you save ${$("#pageCaptureTitle").value.trim() || tab?.title || "this page"}?`,
+        tags: normalizeTags($("#pageCaptureTags").value || "webpage"),
+        priority: $("#pageCapturePriority").value,
+        url: tab.url,
+        sourceTitle: tab?.title || "",
+        pinned: false,
+        archived: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        nextReviewAt: addDays(state.settings.defaultIntervalDays),
+        reviewCount: 0,
+        successCount: 0,
+        ease: 2.5
+      };
+      await writeData({ ...state, memories: [memory, ...state.memories] });
+      toast("Webpage saved");
+      $("#pageCaptureText").value = "";
     });
     $("#saveCapture")?.addEventListener("click", async () => {
       const text = $("#captureText").value.trim();
@@ -511,6 +574,7 @@
       }
       const memory = {
         id: uid(),
+        type: "memory",
         title: $("#captureTitle").value.trim() || tab?.title || "Untitled memory",
         text,
         prompt: $("#capturePrompt").value.trim(),
