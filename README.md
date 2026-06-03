@@ -1,10 +1,10 @@
 # MindStack
 
-[Chrome Extension](https://developer.chrome.com/docs/extensions/)
-[Manifest V3](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3)
-[No Build Step](#run-locally)
-[Storage](https://developer.chrome.com/docs/extensions/reference/api/storage)
-[License: MIT](#license)
+[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-147c72?logo=googlechrome&logoColor=white)](https://developer.chrome.com/docs/extensions/)
+[![Manifest V3](https://img.shields.io/badge/Manifest-V3-0d5f58)](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3)
+[![No Build Step](https://img.shields.io/badge/Build-None-c9772a)](#run-locally)
+[![Storage](https://img.shields.io/badge/Storage-chrome.storage.sync-67727d)](https://developer.chrome.com/docs/extensions/reference/api/storage)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](#license)
 
 MindStack is a professional Chrome extension for memory development. It captures knowledge from webpages, turns notes into reviewable memory cards, schedules resurfacing with spaced repetition, and provides a dashboard for library management and insights.
 
