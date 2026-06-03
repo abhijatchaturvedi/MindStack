@@ -25,6 +25,12 @@ body {
   color: var(--text);
 }
 
+body.dashboard-body {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
 button,
 input,
 textarea,
@@ -39,7 +45,9 @@ button {
 .app-shell {
   display: grid;
   grid-template-columns: 260px minmax(0, 1fr);
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
 }
 
 .sidebar {
@@ -49,6 +57,7 @@ button {
   padding: 24px;
   background: #10181d;
   color: #f7fafb;
+  overflow-y: auto;
 }
 
 .brand-block {
@@ -106,12 +115,16 @@ button {
 }
 
 .workspace {
+  display: flex;
+  flex-direction: column;
   padding: 28px;
+  min-height: 0;
   overflow: hidden;
 }
 
 .topbar {
   display: flex;
+  flex: 0 0 auto;
   align-items: flex-start;
   justify-content: space-between;
   gap: 18px;
@@ -166,6 +179,76 @@ h2 {
 
 .view.active {
   display: block;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+/* Overview: metrics fixed, the two panels fill height with scrollable lists */
+#overviewView.active {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  overflow: hidden;
+}
+
+#overviewView .metrics-grid {
+  flex: 0 0 auto;
+  margin-bottom: 0;
+}
+
+#overviewView .dashboard-grid {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+#overviewView .dashboard-grid .panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#overviewView .panel-heading {
+  flex: 0 0 auto;
+  margin-bottom: 14px;
+}
+
+#overviewView .queue-list,
+#overviewView .memory-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Review: layout fills height, the card scrolls on its own */
+#reviewView.active {
+  display: flex;
+  overflow: hidden;
+}
+
+#reviewView .review-layout {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/* Library: toolbar fixed, list scrolls */
+#libraryView.active {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#libraryView .library-toolbar {
+  flex: 0 0 auto;
+}
+
+#libraryView .memory-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .metrics-grid {
@@ -496,8 +579,9 @@ h2 {
 }
 
 .review-card {
-  min-height: 430px;
+  min-height: 0;
   padding: 28px;
+  overflow-y: auto;
 }
 
 .review-card .prompt {
@@ -847,14 +931,13 @@ select:focus {
 @media (max-width: 980px) {
   .app-shell {
     grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
   }
 
   .sidebar {
-    position: sticky;
-    top: 0;
-    z-index: 2;
     display: grid;
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .nav-list {
@@ -879,6 +962,28 @@ select:focus {
 
   .metrics-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* On narrow screens the whole view scrolls rather than each panel */
+  #overviewView.active,
+  #reviewView.active,
+  #libraryView.active {
+    display: block;
+    overflow-y: auto;
+  }
+
+  #overviewView .dashboard-grid .panel {
+    display: block;
+  }
+
+  #overviewView .queue-list,
+  #overviewView .memory-list,
+  #libraryView .memory-list,
+  #reviewView .review-card {
+    flex: none;
+    min-height: 0;
+    overflow: visible;
+    padding-right: 0;
   }
 }
 
