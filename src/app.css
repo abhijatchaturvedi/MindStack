@@ -220,6 +220,7 @@ h2 {
   min-height: 0;
   overflow-y: auto;
   padding-right: 4px;
+  align-items: start;
 }
 
 /* Review: layout fills height, the card scrolls on its own */
@@ -510,6 +511,31 @@ h2 {
   overflow: hidden;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+.memory-url {
+  display: block;
+  overflow: hidden;
+  margin-top: 3px;
+  color: var(--brand);
+  font-size: 0.8rem;
+  font-weight: 400;
+  text-decoration: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.memory-url:hover {
+  text-decoration: underline;
+}
+
+.popup-notifications-toggle {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--muted);
 }
 
 .tag-row,

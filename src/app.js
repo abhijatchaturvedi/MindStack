@@ -257,7 +257,8 @@
         <header>
           <div>
             <h3>${escapeHtml(memory.title)}</h3>
-            <p>${escapeHtml(memory.prompt || memory.text || memory.url)}</p>
+            ${memory.prompt || memory.text ? `<p>${escapeHtml(memory.prompt || memory.text)}</p>` : ""}
+            ${safeUrl(memory.url) ? `<a class="memory-url" href="${escapeHtml(memory.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(memory.url)}</a>` : ""}
           </div>
           <span class="pill ${memory.priority}">${escapeHtml(memory.priority)}</span>
         </header>
@@ -283,7 +284,8 @@
         <header>
           <div>
             <h3>${memory.pinned ? "★ " : ""}${escapeHtml(memory.title)}</h3>
-            <p>${escapeHtml(memory.text || memory.url || "Saved webpage")}</p>
+            ${memory.text ? `<p>${escapeHtml(memory.text)}</p>` : (!safeUrl(memory.url) ? `<p>Saved webpage</p>` : "")}
+            ${safeUrl(memory.url) ? `<a class="memory-url" href="${escapeHtml(memory.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(memory.url)}</a>` : ""}
           </div>
           <span class="pill ${memory.priority}">${escapeHtml(memory.priority)}</span>
         </header>
@@ -387,6 +389,16 @@
         </article>
       `).join("")
       : `<div class="empty-state">Captured web sources will appear here.</div>`;
+  };
+
+  const safeUrl = (url) => {
+    if (!url) return "";
+    try {
+      const u = new URL(url);
+      return (u.protocol === "http:" || u.protocol === "https:") ? url : "";
+    } catch {
+      return "";
+    }
   };
 
   const countBy = (values) => values.reduce((acc, value) => {
@@ -733,6 +745,14 @@
         });
       });
     };
+
+    if ($("#popupNotifications")) {
+      $("#popupNotifications").checked = state.settings.resurfaceEnabled ?? true;
+      $("#popupNotifications").addEventListener("change", async () => {
+        await writeData({ ...state, settings: { ...state.settings, resurfaceEnabled: $("#popupNotifications").checked } });
+        state = await readData();
+      });
+    }
 
     requestSelection();
     $$(".capture-tabs button").forEach((button) => {
