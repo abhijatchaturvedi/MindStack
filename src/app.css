@@ -5,8 +5,8 @@
   --text: #172026;
   --muted: #67727d;
   --line: #dde3e8;
-  --brand: #147c72;
-  --brand-dark: #0d5f58;
+  --brand: #e8650a;
+  --brand-dark: #c4530a;
   --accent: #c9772a;
   --danger: #b73b42;
   --warn: #ad7322;
@@ -714,7 +714,7 @@ input:focus,
 textarea:focus,
 select:focus {
   border-color: var(--brand);
-  box-shadow: 0 0 0 3px rgba(20, 124, 114, 0.14);
+  box-shadow: 0 0 0 3px rgba(232, 101, 10, 0.14);
 }
 
 .field-grid {
@@ -787,7 +787,7 @@ select:focus {
   opacity: 0;
   pointer-events: none;
   padding: 14px 16px;
-  border: 1px solid rgba(20, 124, 114, 0.18);
+  border: 1px solid rgba(232, 101, 10, 0.18);
   border-radius: 10px;
   background: #172026;
   color: #ffffff;
@@ -839,7 +839,7 @@ select:focus {
   width: 42px;
   height: 42px;
   border-radius: 8px;
-  box-shadow: 0 8px 18px rgba(20, 124, 114, 0.2);
+  box-shadow: 0 8px 18px rgba(232, 101, 10, 0.2);
 }
 
 .popup-header h1 {
