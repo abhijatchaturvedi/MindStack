@@ -5,7 +5,7 @@
   z-index: 2147483647;
   width: min(360px, calc(100vw - 28px));
   padding: 16px;
-  border: 1px solid rgba(232, 101, 10, 0.22);
+  border: 1px solid rgba(20, 124, 114, 0.22);
   border-radius: 10px;
   background: #ffffff;
   box-shadow: 0 20px 55px rgba(23, 32, 38, 0.2);
@@ -60,6 +60,6 @@
 
 .mindstack-resurface .mindstack-open {
   width: 100%;
-  background: #e8650a;
+  background: #147c72;
   color: #ffffff;
 }

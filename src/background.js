@@ -87,7 +87,7 @@ const injectPageToast = (tabId, toastMessage) => {
         zIndex: "2147483647",
         maxWidth: "360px",
         padding: "14px 16px",
-        border: "1px solid rgba(232, 101, 10, 0.22)",
+        border: "1px solid rgba(20, 124, 114, 0.22)",
         borderRadius: "10px",
         background: "#ffffff",
         boxShadow: "0 20px 55px rgba(23, 32, 38, 0.22)",
